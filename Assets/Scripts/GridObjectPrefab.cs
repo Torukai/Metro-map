@@ -2,11 +2,11 @@
 using UnityEngine;
 using TMPro;
 
-public class GridPrefabVisual : MonoBehaviour
+public class GridObjectPrefab : MonoBehaviour
 {
-    public static GridPrefabVisual Instance { get; private set; }
+    public static GridObjectPrefab Instance { get; private set; }
 
-    [SerializeField] private Transform pfGridPrefabVisualNode;
+    [SerializeField] private Transform GridPrefabNode;
 
     private List<Transform> visualNodeList;
     private Transform[,] visualNodeArray;
@@ -71,12 +71,13 @@ public class GridPrefabVisual : MonoBehaviour
 
     private Transform CreateVisualNode (Vector3 position)
     {
-        Transform visualNodeTransform = Instantiate(pfGridPrefabVisualNode, position, Quaternion.identity);
+        Transform visualNodeTransform = Instantiate (GridPrefabNode, position, Quaternion.identity);
         return visualNodeTransform;
     }
 
     private void SetupVisualNode (Transform visualNodeTransform, GridObject mapGridObject)
     {
+        SpriteRenderer OutlineSprite = visualNodeTransform.Find("Outline").GetComponent<SpriteRenderer>();
         SpriteRenderer RedSprite = visualNodeTransform.Find ("Red").GetComponent<SpriteRenderer>();
         SpriteRenderer GreenSprite = visualNodeTransform.Find ("Green").GetComponent<SpriteRenderer>();
         SpriteRenderer BlueSprite = visualNodeTransform.Find ("Blue").GetComponent<SpriteRenderer>();
@@ -91,21 +92,25 @@ public class GridPrefabVisual : MonoBehaviour
                 case GridObject.Type.Empty:
                     break;
                 case GridObject.Type.Red:
+                    OutlineSprite.gameObject.SetActive (true);
                     RedSprite.gameObject.SetActive (true);
                     NameText.gameObject.SetActive (true);
                     NameText.SetText (mapGridObject.Name);
                     break;
                 case GridObject.Type.Green:
+                    OutlineSprite.gameObject.SetActive (true);
                     GreenSprite.gameObject.SetActive (true);
                     NameText.gameObject.SetActive (true);
                     NameText.SetText (mapGridObject.Name);
                     break;
                 case GridObject.Type.Blue:
+                    OutlineSprite.gameObject.SetActive (true);
                     BlueSprite.gameObject.SetActive (true);
                     NameText.gameObject.SetActive (true);
                     NameText.SetText(mapGridObject.Name);
                     break;
                 case GridObject.Type.Black:
+                    OutlineSprite.gameObject.SetActive (true);
                     BlackSprite.gameObject.SetActive (true);
                     NameText.gameObject.SetActive (true);
                     NameText.SetText (mapGridObject.Name);

@@ -5,34 +5,34 @@ using UnityEngine;
 
 public class Pathfinding
 {
-	[SerializeField] private List<GridObject> m_Nodes = new List<GridObject>();
-	private GridObject start;
-	private GridObject end;
+	[SerializeField] private List<GridObject> _nodes = new List<GridObject>();
+	public GridObject start;
+	public GridObject end;
+	public int count = 0;
+	public Path path;
 
 	public List<GridObject> nodes
 	{
 		get
 		{
-			return m_Nodes;
+			return _nodes;
 		}
 	}
 
 	public void GetShortestPath()
 	{
-
-		// We don't accept null arguments
 		if (start == null || end == null)
 		{
 			throw new ArgumentNullException();
 		}
 
 		// The final path
-		Path path = new Path();
+		path = new Path();
 
 		// If the start and end are same node, we can return the start node
 		if (start == end)
 		{
-			path.nodes.Add(start);
+			path.nodes.Add (start);
 			Debug.Log("Path: " + path); ;
 		}
 
@@ -43,46 +43,46 @@ public class Pathfinding
 		Dictionary<GridObject, GridObject> previous = new Dictionary<GridObject, GridObject>();
 
 		// The calculated distances, set all to Infinity at start, except the start Node
-		Dictionary<GridObject, float> distances = new Dictionary<GridObject, float>();
+		Dictionary<GridObject, int> distances = new Dictionary<GridObject, int>();
 
-		for (int i = 0; i < m_Nodes.Count; i++)
+		for (int i = 0; i < _nodes.Count; i++)
 		{
-			GridObject node = m_Nodes[i];
-			unvisited.Add(node);
+			GridObject node = _nodes[i];
+			unvisited.Add (node);
 
 			// Setting the node distance to Infinity
-			distances.Add(node, float.MaxValue);
+			distances.Add (node, int.MaxValue);
 		}
 
 		// Set the starting Node distance to zero
-		distances[start] = 0f;
+		distances[start] = 0;
 		while (unvisited.Count != 0)
 		{
 
 			// Ordering the unvisited list by distance, smallest distance at start and largest at end
-			unvisited = unvisited.OrderBy(node => distances[node]).ToList();
+			unvisited = unvisited.OrderBy (node => distances[node]).ToList();
 
 			// Getting the Node with smallest distance
 			GridObject current = unvisited[0];
 
 			// Remove the current node from unvisisted list
-			unvisited.Remove(current);
+			unvisited.Remove (current);
 
 			// When the current node is equal to the end node, then we can break and return the path
 			if (current == end)
 			{
 				// Construct the shortest path
-				while (previous.ContainsKey(current))
+				while (previous.ContainsKey (current))
 				{
 					// Insert the node onto the final result
-					path.nodes.Insert(0, current);
+					path.nodes.Insert (0, current);
 
 					// Traverse from start to end
 					current = previous[current];
 				}
 
 				// Insert the source onto the final result
-				path.nodes.Insert(0, current);
+				path.nodes.Insert (0, current);
 				break;
 			}
 
@@ -92,10 +92,10 @@ public class Pathfinding
 				GridObject neighbor = current.connections[i];
 
 				// Getting the distance between the current node and the connection (neighbor)
-				float length = 1;// Vector3.Distance(current.transform.position, neighbor.transform.position);
+				int length = 1;// Vector3.Distance(current.transform.position, neighbor.transform.position);
 
 				// The distance from start node to this connection (neighbor) of current node
-				float alt = distances[current] + length;
+				int alt = distances[current] + length;
 
 				// A shorter path to the connection (neighbor) has been found
 				if (alt < distances[neighbor])
@@ -105,32 +105,44 @@ public class Pathfinding
 				}
 			}
 		}
-		path.Bake();
-
-		Debug.Log(path.ToString());
-		path.GetTransfersCount();
+		path.Build();
+		Debug.Log (path.ToString());
 	}
 
-	public void SetStartPosition(Vector3 worldPosition, Grid<GridObject> grid)
+	public void SetStartPosition (Vector3 worldPosition, Grid<GridObject> grid)
 	{
-		GridObject gridObject = grid.GetGridObject(worldPosition);
+		GridObject gridObject = grid.GetGridObject (worldPosition);
 		if (gridObject != null)
 		{
-			start = gridObject;
+			if (!gridObject.types.Contains (GridObject.Type.Empty))
+			{
+				start = gridObject;
+			}
+			else
+			{
+				Debug.Log ("It's empty");
+			}
 		}
 	}
 
-	public void SetEndPosition(Vector3 worldPosition, Grid<GridObject> grid)
+	public void SetEndPosition (Vector3 worldPosition, Grid<GridObject> grid)
 	{
-		GridObject gridObject = grid.GetGridObject(worldPosition);
+		GridObject gridObject = grid.GetGridObject (worldPosition);
 		if (gridObject != null)
 		{
-			end = gridObject;
+			if (!gridObject.types.Contains (GridObject.Type.Empty))
+			{
+				end = gridObject;
+			}
+			else
+			{
+				Debug.Log ("It's empty");
+			}
 		}
 	}
 
-	public void SetNodes(List<GridObject> nodes)
+	public void SetNodes (List<GridObject> nodes)
 	{
-		this.m_Nodes = nodes;
+		_nodes = nodes;
 	}
 }

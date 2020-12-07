@@ -3,36 +3,40 @@ using UnityEngine;
 
 public class Map
 {
-	private Grid<GridObject> grid;
-	public List<GridObject> addedObjects;
+	private Grid<GridObject> _grid;
+	private List<GridObject> _objects;
+
+	public List<GridObject> objects
+	{
+		get
+		{
+			return _objects;
+		}
+	}
+
+	public Grid<GridObject> grid
+	{
+		get
+		{
+			return _grid;
+		}
+	}
 
 	public Map()
 	{
-		grid = new Grid<GridObject>(14, 14, 8f, Vector3.zero, (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
-		addedObjects = new List<GridObject>();
+		_grid = new Grid<GridObject>(14, 14, 8f, Vector3.zero, (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y));
+		_objects = new List<GridObject>();
 	}
 
-	public Grid<GridObject> GetGrid()
+	public void SetCell (int i, int j, string name, GridObject.Type type)
 	{
-		return grid;
-	}
-
-	public void SetCell(int i, int j, string name, GridObject.Type type)
-	{
-		GridObject gridObject = grid.GetGridObjectByIndex(i, j);
+		GridObject gridObject = grid.GetGridObjectByIndex (i, j);
 		if (gridObject != null)
 		{
 			gridObject.Name = name;
-			gridObject.SetGridTypes(type);
-			gridObject.SetGridType(type);
+			gridObject.SetGridTypes (type);
 		}
-
-		addedObjects.Add(gridObject);
-	}
-
-	public List<GridObject> GetAddedObjects()
-	{
-		return addedObjects;
+		_objects.Add (gridObject);
 	}
 
 	public void SetCell (int i, int j, string name, GridObject.Type[] type)
@@ -44,7 +48,7 @@ public class Map
 			gridObject.SetGridTypes (type);
 			
 		}
-		addedObjects.Add(gridObject);
+		_objects.Add(gridObject);
 	}
 
 	public void SetConnections (int i, int j, List<string> connections)
@@ -55,7 +59,7 @@ public class Map
 		{
 			foreach (string s in connections)
 			{
-				gridObject.AddChild (addedObjects.Find (x => x.Name == s));
+				gridObject.AddChild (_objects.Find (x => x.Name == s));
 			}
 		}
 	}

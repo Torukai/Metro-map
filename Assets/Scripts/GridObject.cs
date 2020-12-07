@@ -13,23 +13,22 @@ public class GridObject {
     private Grid<GridObject> grid;
     public string Name;
     private int x, y;
-    private Type type;
-    public List<Type> types = new List<Type>();
-    public List<GridObject> m_Connections;
+    public List<Type> _types = new List<Type>();
+    public List<GridObject> _connections;
 
-    public virtual List<GridObject> connections
+    public List<GridObject> connections
     {
         get
         {
-            return m_Connections;
+            return _connections;
         }
     }
 
-    public GridObject this[int index]
+    public List<Type> types
     {
         get
         {
-            return m_Connections[index];
+            return _types;
         }
     }
 
@@ -37,36 +36,29 @@ public class GridObject {
         this.grid = grid;
         this.x = x;
         this.y = y;
-        type = Type.Empty;
-        m_Connections = new List<GridObject>();
+        _types.Add(Type.Empty);
+        _connections = new List<GridObject>();
     }
 
     public void AddChild (GridObject aWPoints)
     {
-        m_Connections.Add (aWPoints);
+        _connections.Add (aWPoints);
     }
 
     public int GetX() => x;
     public int GetY() => y;
 
-    public Type GetGridType() {
-        return type;
-    }
-
     public List<Type> GetGridTypes()
     {
-        return types;
-    }
-
-    public void SetGridType (Type type) {
-        this.type = type;
+        return _types;
     }
 
     public void SetGridTypes (params Type[] types)
     {
+        _types.Clear();
         foreach (var v in types)
 		{
-            this.types.Add(v);
+            _types.Add(v);
 		}
     }
 

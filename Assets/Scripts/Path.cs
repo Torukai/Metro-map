@@ -11,14 +11,17 @@ public class Path
 	/// <summary>
 	/// The nodes.
 	/// </summary>
-	protected List<GridObject> m_Nodes = new List<GridObject>();
-
-	private int transfersCount;
+	private List<GridObject> _nodes = new List<GridObject>();
 
 	/// <summary>
 	/// The length of the path.
 	/// </summary>
-	protected float m_Length = 0f;
+	private int _transfers = 0;
+
+	/// <summary>
+	/// The length of the path.
+	/// </summary>
+	private int _length = 0;
 
 	/// <summary>
 	/// Gets the nodes.
@@ -28,7 +31,7 @@ public class Path
 	{
 		get
 		{
-			return m_Nodes;
+			return _nodes;
 		}
 	}
 
@@ -36,11 +39,11 @@ public class Path
 	/// Gets the length of the path.
 	/// </summary>
 	/// <value>The length.</value>
-	public virtual float length
+	public virtual int length
 	{
 		get
 		{
-			return m_Length;
+			return _length;
 		}
 	}
 
@@ -51,49 +54,48 @@ public class Path
 	{
 		get
 		{
-			return transfersCount;
+			return _transfers;
 		}
 	}
 
 	/// <summary>
-	/// Bake the path.
-	/// Making the path ready for usage, Such as caculating the length.
+	/// Build the path.
 	/// </summary>
-	public virtual void Bake()
+	public virtual void Build()
 	{
 		List<GridObject> calculated = new List<GridObject>();
-		m_Length = 0f;
-		for (int i = 0; i < m_Nodes.Count; i++)
+		_length = 0;
+		for (int i = 0; i < _nodes.Count; i++)
 		{
-			GridObject node = m_Nodes[i];
+			GridObject node = _nodes[i];
 			for (int j = 0; j < node.connections.Count; j++)
 			{
 				GridObject connection = node.connections[j];
 
 				// Don't calcualte calculated nodes
-				if (m_Nodes.Contains(connection) && !calculated.Contains(connection))
+				if (_nodes.Contains (connection) && !calculated.Contains (connection))
 				{
-					// Calculating the distance between a node and connection when they are both available in path nodes list
-					m_Length += 1;
+					_length += 1;
 				}
 			}
-			calculated.Add(node);
+			calculated.Add (node);
 		}
+		CalculateTransfers();
 	}
 
-	public void GetTransfersCount()
+	public void CalculateTransfers()
 	{
-		transfersCount = 0;
-		var current = m_Nodes[0].types;
-		foreach (var node in m_Nodes)
+		_transfers = 0;
+		var current = _nodes[0].types;
+		foreach (var node in _nodes)
 		{
-			if (!node.GetGridTypes().Intersect(current).Any())
+			if (!node.GetGridTypes().Intersect (current).Any())
 			{
 				current = node.types;
-				transfersCount++;
+				_transfers++;
 			}
 		}
-		Debug.Log("Amount of transfers: " + transfersCount);
+		Debug.Log("Amount of transfers: " + _transfers);
 	}
 
 	/// <summary>
@@ -103,11 +105,6 @@ public class Path
 	/// <filterpriority>2</filterpriority>
 	public override string ToString()
 	{
-		return string.Format(
-			"Path: {0}\nLength: {1}",
-			string.Join(
-				", ",
-				nodes.Select(node => node.Name).ToArray()),
-			length);
+		return string.Format (string.Join ( " - ", nodes.Select (node => node.Name).ToArray()));
 	}
 }
